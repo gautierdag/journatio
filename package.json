@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "npm": "6.14.8",
-    "node": "14.15.0"
+    "node": "16.13.0"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
@@ -14,6 +14,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "gh-pages": "^4.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
@@ -21,6 +22,8 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -46,5 +49,6 @@
   },
   "devDependencies": {
     "prettier": "^2.1.2"
-  }
+  },
+  "homepage": "https://gautierdag.github.io/journatio"
 }
