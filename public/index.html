@@ -2,42 +2,549 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" href="favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Ratio Calculator for Publishing"
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <title>Ratio Calculator - Publishing Tool</title>
+    <style>
+      :root {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-tertiary: #334155;
+        --accent-primary: #3b82f6;
+        --accent-secondary: #8b5cf6;
+        --accent-tertiary: #06b6d4;
+        --accent-gold: #fbbf24;
+        --accent-green: #10b981;
+        --accent-pink: #ec4899;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #64748b;
+        --border-color: #475569;
+        --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      }
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        min-height: 100vh;
+      }
+
+      .app {
+        text-align: center;
+        padding: 10px 20px;
+      }
+
+      .app-header {
+        min-height: 40vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-primary);
+        max-width: 100%;
+        padding-top: 10px;
+      }
+
+      .title {
+        font-size: clamp(2rem, 6vw, 4rem);
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: var(--shadow);
+      }
+
+      .subtitle {
+        font-size: clamp(1rem, 3vw, 1.5rem);
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        font-weight: 300;
+      }
+
+      .calculator {
+        margin-top: 20px;
+        background: var(--bg-secondary);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .input-group {
+        margin-bottom: 30px;
+      }
+
+      .input-label {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      input {
+        border: 2px solid var(--border-color);
+        background: var(--bg-tertiary);
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        color: var(--text-primary);
+        text-align: center;
+        outline: none;
+        border-radius: 12px;
+        padding: 15px 20px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        min-width: 120px;
+      }
+
+      input:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .percentage-symbol {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        color: var(--accent-primary);
+        margin-left: 10px;
+        font-weight: 600;
+      }
+
+      /* Chrome, Safari, Edge, Opera */
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      /* Firefox */
+      input[type=number] {
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+
+      .results {
+        margin-top: 30px;
+        line-height: 1.6;
+      }
+
+      .error {
+        color: var(--accent-pink);
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+
+      .result-item {
+        margin-bottom: 10px;
+      }
+
+      .visualization {
+        margin: 30px 0;
+        width: 100%;
+        max-width: min(600px, calc(100vw - 40px));
+      }
+
+      .bar-group {
+        margin: 25px 0;
+        text-align: left;
+      }
+
+      .bar-label {
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .bar-container {
+        width: 100%;
+        height: 40px;
+        background: var(--bg-primary);
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid var(--border-color);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .bar-fill {
+        height: 100%;
+        transition: width 0.4s ease;
+        position: relative;
+      }
+
+      .bar-segments {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+      }
+
+      .bar-segment {
+        flex: 1;
+        border-right: 1px solid var(--bg-primary);
+        transition: background-color 0.3s ease;
+      }
+
+      .bar-segment:last-child {
+        border-right: none;
+      }
+
+      .bar-segment.filled {
+        background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
+      }
+
+      .bar-segment.unfilled {
+        background: transparent;
+      }
+
+      .bar-fill-smooth {
+        height: 100%;
+        background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-tertiary) 100%);
+        transition: width 0.4s ease;
+        border-radius: 0 6px 6px 0;
+      }
+
+      /* Current bar styling */
+      .current-bar .bar-segment.filled {
+        background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-green) 100%);
+      }
+
+      .current-bar .bar-fill-smooth {
+        background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-green) 100%);
+      }
+
+      /* Lower ratio bar styling */
+      .bar-group:first-child .bar-segment.filled {
+        background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-pink) 100%);
+      }
+
+      .bar-group:first-child .bar-fill-smooth {
+        background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-pink) 100%);
+      }
+
+      @media (max-width: 768px) {
+        .app {
+          padding: 10px 15px;
+        }
+        
+        .app-header {
+          padding-top: 10px;
+        }
+        
+        .calculator {
+          padding: 20px 15px;
+          border-radius: 15px;
+        }
+        
+        .bar-container {
+          height: 35px;
+        }
+        
+        .visualization {
+          max-width: calc(100vw - 30px);
+        }
+        
+        input {
+          min-width: 100px;
+          padding: 12px 15px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .calculator {
+          padding: 15px 10px;
+        }
+        
+        .bar-container {
+          height: 30px;
+        }
+        
+        .visualization {
+          max-width: calc(100vw - 20px);
+        }
+      }
+    </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <div class="app">
+      <header class="app-header">
+        <h1 class="title">Ratio Calculator</h1>
+        <p class="subtitle">Convert percentages to publishing-ready ratios</p>
+        
+        <div class="calculator">
+          <div class="input-group">
+            <label class="input-label">Enter percentage to convert:</label>
+            <input
+              id="percentageInput"
+              value="50.5"
+              type="text"
+              autofocus
+              size="8"
+              maxlength="10"
+            /><span class="percentage-symbol">%</span>
+          </div>
+          
+          <div class="results">
+            <div id="error" class="error"></div>
+            <div id="visualization" class="visualization"></div>
+            <div id="results"></div>
+          </div>
+        </div>
+      </header>
+    </div>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <script>
+      function validatePercentage(input) {
+        // Remove trailing decimal point if present (e.g., "50." becomes "50")
+        const cleanInput = input.replace(/\.$/, '');
+        
+        // Allow decimal numbers from 0.1 to 100 with any number of decimal places
+        const num = parseFloat(cleanInput);
+        return /^\d{1,2}(\.\d+)?$|^100(\.0+)?$/.test(cleanInput) && num > 0 && num <= 100;
+      }
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+      function preCalculateRatios() {
+        const ratios = {};
+        for (let val of [10, 9, 8, 7, 6, 5, 4, 3, 2]) {
+          for (let i = 1; i < val; i++) {
+            let ratio = i / val;
+            ratios[ratio] = `${i} in ${val}`;
+          }
+        }
+        return ratios;
+      }
+
+      function gcd(a, b) {
+        if (!b) {
+          return a;
+        }
+        return gcd(b, a % b);
+      }
+
+      function canRepresentAsSimpleRatio(num) {
+        // Check if the number can be represented as a simple ratio (with reasonable denominators)
+        // For numbers with many decimal places or complex fractions, return false
+        
+        const decimalPart = num.toString().split('.')[1];
+        if (!decimalPart) return true; // It's a whole number
+        
+        // If more than 3 decimal places, consider it complex
+        if (decimalPart.length > 3) return false;
+        
+        // Try to find a simple ratio representation with denominators up to 1000
+        for (let denom = 2; denom <= 1000; denom++) {
+          const numerator = Math.round(num * denom / 100);
+          const calculatedPercentage = (numerator / denom) * 100;
+          
+          // If we can represent it accurately with a reasonable denominator
+          if (Math.abs(calculatedPercentage - num) < 0.001) {
+            const gcdValue = gcd(numerator, denom);
+            const simplifiedDenom = denom / gcdValue;
+            // Only consider it simple if the simplified denominator is reasonable
+            return simplifiedDenom <= 50;
+          }
+        }
+        
+        return false;
+      }
+
+      function findBaseRatio(num) {
+        // For decimal percentages, we'll work with a larger denominator
+        let denominator = 100;
+        let numerator = num;
+        
+        // If it's a decimal, multiply both by 10 or 100 to work with integers
+        if (num % 1 !== 0) {
+          if (num * 10 % 1 === 0) {
+            numerator = num * 10;
+            denominator = 1000;
+          } else if (num * 100 % 1 === 0) {
+            numerator = num * 100;
+            denominator = 10000;
+          } else {
+            // For complex decimals, try to find the best representation
+            numerator = num * 10000;
+            denominator = 1000000;
+          }
+        }
+        
+        let greatestCommonFactor = gcd(Math.round(numerator), denominator);
+        if (greatestCommonFactor > 1) {
+          const finalNumerator = Math.round(numerator) / greatestCommonFactor;
+          const finalDenominator = denominator / greatestCommonFactor;
+          return `${finalNumerator} in ${finalDenominator}`;
+        } else {
+          return `${Math.round(numerator)} in ${denominator}`;
+        }
+      }
+
+      function createBar(label, numerator, denominator, isCurrentBar = false, useSegments = true) {
+        const percentage = (numerator / denominator) * 100;
+        const barClass = isCurrentBar ? 'current-bar' : '';
+        
+        if (useSegments) {
+          return `
+            <div class="bar-group ${barClass}">
+              <div class="bar-label">${label}</div>
+              <div class="bar-container">
+                <div class="bar-segments">
+                  ${Array.from({length: denominator}, (_, i) => 
+                    `<div class="bar-segment ${i < numerator ? 'filled' : 'unfilled'}"></div>`
+                  ).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          // Create a smooth bar without segments
+          return `
+            <div class="bar-group ${barClass}">
+              <div class="bar-label">${label}</div>
+              <div class="bar-container">
+                <div class="bar-fill-smooth" style="width: ${percentage}%"></div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      function createVisualization(currentPercentage, lowerRatio, higherRatio, currentRatio) {
+        const visualizationElement = document.getElementById('visualization');
+        
+        let html = '';
+        const canUseSegments = canRepresentAsSimpleRatio(currentPercentage);
+        
+        // Lower ratio bar
+        if (lowerRatio) {
+          const [num, denom] = lowerRatio.split(' in ').map(n => parseInt(n));
+          const percentage = ((num / denom) * 100).toFixed(1);
+          html += createBar(`More than: ${lowerRatio} (${percentage}%)`, num, denom, false, true);
+        }
+        
+        // Current percentage bar
+        if (canUseSegments) {
+          const [currentNum, currentDenom] = currentRatio.split(' in ').map(n => parseInt(n));
+          currentRatio = `Exactly ${currentRatio}`;
+          html += createBar(`Current: ${currentPercentage}% (${currentRatio})`, currentNum, currentDenom, true, true);
+        } else {
+          // For complex decimals, show as smooth bar
+          html += createBar(`Current: ${currentPercentage}%`, currentPercentage, 100, true, false);
+        }
+        
+        // Higher ratio bar
+        if (higherRatio) {
+          const [num, denom] = higherRatio.split(' in ').map(n => parseInt(n));
+          const percentage = ((num / denom) * 100).toFixed(1);
+          html += createBar(`Less than: ${higherRatio} (${percentage}%)`, num, denom, false, true);
+        }
+        
+        visualizationElement.innerHTML = html;
+      }
+
+      function updateResults(value) {
+        const errorElement = document.getElementById('error');
+        const resultsElement = document.getElementById('results');
+        const visualizationElement = document.getElementById('visualization');
+        
+        // Remove trailing decimal point if present (e.g., "50." becomes "50")
+        const cleanValue = value.replace(/\.$/, '');
+        let num = parseFloat(cleanValue);
+        
+        if (!validatePercentage(value) || isNaN(num)) {
+          errorElement.textContent = 'Invalid Value. Enter a number between 0.1 and 100.';
+          resultsElement.innerHTML = '';
+          visualizationElement.innerHTML = '';
+          return;
+        }
+
+        errorElement.textContent = '';
+        
+        let baseRatio = findBaseRatio(num);
+        const result_percentages = [baseRatio];
+        const ratios = preCalculateRatios();
+        const keys = Object.keys(ratios).sort();
+
+        let lowerRatio = null;
+        let higherRatio = null;
+        let bigger = true;
+        for (let i = 0; i < keys.length; i++) {
+          if (Math.abs(parseFloat(keys[i]) - (num / 100)) < 0.001) {
+            if (i < keys.length - 1) {
+              higherRatio = ratios[keys[i + 1]];
+              result_percentages.push(
+                `Less than ${ratios[keys[i + 1]]} (${(
+                  parseFloat(keys[i + 1]) * 100
+                ).toFixed(1)}%)`
+              );
+            }
+            if (i > 0) {
+              lowerRatio = ratios[keys[i - 1]];
+              result_percentages.push(
+                `More than ${ratios[keys[i - 1]]} (${(
+                  parseFloat(keys[i - 1]) * 100
+                ).toFixed(1)}%)`
+              );
+            }
+            bigger = false;
+          }
+          if (parseFloat(keys[i]) > num / 100 && bigger) {
+            higherRatio = ratios[keys[i]];
+            result_percentages.push(
+              `Less than ${ratios[keys[i]]} (${(
+                parseFloat(keys[i]) * 100
+              ).toFixed(1)}%)`
+            );
+
+            if (i > 0) {
+              lowerRatio = ratios[keys[i - 1]];
+              result_percentages.push(
+                `More than ${ratios[keys[i - 1]]} (${(
+                  parseFloat(keys[i - 1]) * 100
+                ).toFixed(1)}%)`
+              );
+            }
+            bigger = false;
+          }
+        }
+
+        // Create the visualization
+        createVisualization(num, lowerRatio, higherRatio, baseRatio);
+
+        // Remove the text results - keep only the visualization
+        resultsElement.innerHTML = '';
+      }
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('percentageInput');
+        
+        // Initial calculation
+        updateResults(input.value);
+        
+        // Add event listener for input changes
+        input.addEventListener('input', function(event) {
+          updateResults(event.target.value);
+        });
+      });
+    </script>
   </body>
 </html>
